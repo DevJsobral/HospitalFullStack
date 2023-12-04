@@ -8,131 +8,150 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $nome = $_POST["nome"];
     $email = $_POST["email"];
     $senha = $_POST["senha"];
-
-
+    $msg_erro = "";
 
     if ($tipoUsuario == "paciente") {
         $sql_verificacao = "select email from pacientes where email = '$email'";
+        $result = mysqli_query($conn, $sql_verificacao);
 
-        if(isset($sql_verificacao)){
-            echo"Email não existe cadastrado com sucesso";
+        if(mysqli_num_rows($result) > 0){
+            echo '<script>alert("Erro ao cadastrar o usuário: E-mail já existe");</script>';
+        } else {  
+            $sql = "INSERT INTO pacientes (nome_Usuario, nome, email, senha) VALUES ('$nomeUsuario', '$nome', '$email', '$senha')";
+            mysqli_query($conn, $sql);
+            echo '<script>alert("Cadastro realizado com sucesso");</script>';
+        } 
+    } 
+    elseif ($tipoUsuario == "medico") {
+        $sql_verificacao = "select email from pacientes where email = '$email'";
+        $result = mysqli_query($conn, $sql_verificacao);
+
+        if(mysqli_num_rows($result) > 0){
+            echo '<script>alert("Erro ao cadastrar o usuário: E-mail já existe");</script>';
         } else {
-            echo "Email já existe";
-            die;
-        }
-
-        $sql = "INSERT INTO pacientes (nome_Usuario, nome, email, senha) VALUES ('$nomeUsuario', '$nome', '$email', '$senha')";
-    } elseif ($tipoUsuario == "medico") {
-        $sql = "INSERT INTO medicos (nome_Usuario, nome, email, senha) VALUES ('$nomeUsuario', '$nome', '$email', '$senha')";
-    }
-
-    
-    if (mysqli_query($conn, $sql)) {
-        echo "Usuário cadastrado com sucesso!";
-    } else {
-        echo "Erro ao cadastrar o usuário: " . mysqli_error($conexao);
+            $sql = "INSERT INTO medicos (nome_Usuario, nome, email, senha) VALUES ('$nomeUsuario', '$nome', '$email', '$senha')";
+            mysqli_query($conn, $sql);
+            echo '<script>alert("Cadastro realizado com sucesso");</script>';
+        }   
     }
 }
-
-
-
 ?>
-
 
 <!DOCTYPE html>
 <html lang="pt-br">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Consulta Médica - Hospital Antonio Miguel</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #e1d6cb; /* Bege claro */
-            color: #952f57; /* Marrom escuro */
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Cadastro e Login</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #ffffff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 100vh;
+      margin: 0;
+    }
 
-        header {
-            background-color: #952f57; /* Marrom */
-            color: #fff;
-            text-align: center;
-            padding: 1em;
-        }
+    .container {
+      max-width: 400px;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      margin-top: 20px;
+    }
 
-        section {
-            max-width: 800px;
-            margin: 20px auto;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
+    form {
+      margin-top: 20px;
+    }
 
-        form {
-            display: flex;
-            flex-direction: column;
-            max-width: 400px;
-            margin: 0 auto;
-        }
+    label {
+      display: block;
+      margin-top: 10px;
+    }
 
-        label {
-            margin-bottom: 8px;
-        }
+    input,
+    select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      margin-bottom: 15px;
+      box-sizing: border-box;
+    }
 
-        input,
-        select {
-            padding: 8px;
-            margin-bottom: 16px;
-        }
+    .btn-container {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
 
-        button {
-            padding: 10px;
-            background-color: #952f57; /* Marrom escuro */
-            color: #fff;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
+    button {
+      padding: 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
+    }
 
-        button.consulta-button {
-            background-color: #8d6e63; /* Marrom médio */
-            margin-top: 20px;
-        }
-    </style>
+    #camposMedico {
+      display: none;
+    }
+
+    /* Estilos para o navbar personalizado */
+    .custom-navbar {
+      background-color: #3498db !important; /* Cor do navbar */
+    }
+    
+    .custom-footer {
+      background-color: #8cc6ec !important; 
+      color: #000000; 
+      text-align: center; 
+      padding: 10px; 
+      width: 100%; 
+    }
+  </style>
 </head>
+<body> 
+  <div class="container mt-5">
+    <h2 class="text-center">Cadastro</h2>
+    <form id="cadastroLoginForm" method="post" action="">
+      
+      <label for="tipoUsuario">Escolha o Tipo de Usuário:</label>
+      <select id="tipoUsuario" name="tipo" class="form-select" required>
+        <option value="" disabled selected>Selecione o tipo de usuário</option>
+        <option value="paciente">Paciente</option>
+        <option value="medico">Médico</option>
+      </select>
 
-<body>
-    <header>
-        <h1>Hospital Antonio Miguel - Consulta Médica</h1>
-    </header>
+      <!-- Campos de cadastro comuns -->
+      <label for="nome">Nome:</label>
+      <input type="text" id="nome" name="nome" class="form-control" required>
 
-    <section>
-        <h2>Cadastro e Login</h2>
-        <form method="post" action="">
-            <label for="tipoUsuario">Escolha o Tipo de Usuário:</label>
-            <select id="tipoUsuario" name="tipo">
-                <option value="paciente">Paciente</option>
-                <option value="medico">Médico</option>
-            </select>
+      <label for="NomeUsuario">Nome de Usuário:</label>
+      <input type="text" id="nomeUsuario" name="nomeUsuario" class="form-control" required>
 
-            <label for="nomeUsuario">Nome de Usuário:</label>
-            <input type="text" id="nomeUsuario" name="nomeUsuario">
+      <label for="email">Email:</label>
+      <input type="email" id="email" name="email" class="form-control" required>
 
-            <label for="nome">Nome:</label>
-            <input type="text" id="nome" name="nome">
+      <label for="senha">Senha:</label>
+      <input type="password" id="senha" name="senha" class="form-control" required>
 
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email">
+      <!-- Campos específicos para médicos -->
+      
+      <div class="btn-container">
+        <button type="submit" class="btn btn-primary">Cadastrar</button>
+      </div>
+    </form>
+  </div>
 
-            <label for="senha">Senha:</label>
-            <input type="password" id="senha" name="senha">
+  <footer class="bg-light text-center py-3 custom-footer">
+    <p> Atendimento 24 horas.</p>
+    <p> Avenida Napóles - 511 - Jardim Atântico - Olinda</p>
+    <p>&copy; 2023 Hospital Antonio Miguel. Todos os direitos reservados.</p>
+  </footer>
 
-            <button type="submit">Cadastrar</button>
-        </form>
-
-    </section>
-    </body>
+</body>
 </html>

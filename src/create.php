@@ -1,7 +1,6 @@
 <?php
 include("conexao.php");
 
-
 $sql = "
 
     CREATE TABLE IF NOT EXISTS pacientes (
