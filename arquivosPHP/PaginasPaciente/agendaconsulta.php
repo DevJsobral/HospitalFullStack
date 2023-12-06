@@ -2,21 +2,31 @@
 include("../src/conexao.php");
 include("../src/protect.php");
 
-    if(isset($_POST['especialidade'])) {
-        $especialidade = $_POST["especialidade"];
-        $sql = "SELECT nome_usuario FROM medicos WHERE disponivel = TRUE AND especialidade = '$especialidade'";
-    
-        $result = $conn->query($sql);
-        $options = "";
-    
-        if ($result->num_rows > 0) {
-            while ($row = $result->fetch_assoc()) {
+if (isset($_POST['especialidade'])) {
+    $especialidade = $_POST["especialidade"];
+    $horario = $_POST["horario"];
+
+    $sql = "SELECT nome_usuario, id FROM medicos WHERE disponivel = TRUE AND especialidade = '$especialidade'";
+    $result = $conn->query($sql);
+    $options = "";
+
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            $sqlHorarios = "SELECT hora FROM agendamentos WHERE id_medico = '" . $row["id"] . "' AND hora = '$horario'";
+            $resultHorarios = $conn->query($sqlHorarios);
+
+            if ($resultHorarios->num_rows > 0) {
+                // Se houver algum agendamento para este médico e horário, significa que não está disponível
+                $options .= "<option value=''>Nenhum(a) $especialidade disponível neste horário</option>";
+            } else {
+                // Se não houver agendamentos, o médico está disponível
                 $options .= "<option value='" . $row["nome_usuario"] . "'>" . $row["nome_usuario"] . "</option>";
             }
-        } else {
-            $options = "<option value=''>Nenhum médico disponível</option>";
         }
+    } else {
+        $options = "<option value=''>Nenhum médico disponível</option>";
     }
+}
 
     if (isset($_POST['medico'])) {
         $medico = $_POST["medico"];
@@ -131,12 +141,28 @@ include("../src/protect.php");
                 <label for="especialidade" class="form-label">Especialidade</label>
                 <select id="especialidade" class="form-select" name="especialidade" required>
                     <option value="" disabled selected>Selecione sua especialidade</option>
-                    <option value="Cardiologista">Cardiologia</option>
-                    <option value="Ortopedista">Ortopedia</option>
+                    <option value="Cardiologista">Cardiologista</option>
+                    <option value="Ortopedista">Ortopedista</option>
                     <option value="Geral">Clínico Geral</option>
                     <option value="Pneumologista">Pneumologista</option>
                     <option value="Ginecologista">Ginecologista</option>
                     <option value="Urologista">Urologista</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="data" class="form-label">Data</label>
+                <input type="date" name="data" id="data" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label for="horario" class="form-label">Horário</label>
+                <select id="horario" name="horario" class="form-select" required>
+                    <option value="09:00-10:00">9:00-10:00</option>
+                    <option value="10:00-11:00">11:00-12:00</option>
+                    <option value="11:00-12:00">13:00-14:00</option>
+                    <option value="13:00-14:00">14:00-15:00</option>
+                    <option value="14:00-15:00">15:00-16:00</option>
+                    <option value="15:00-16:00">16:00-17:00</option>
+                    <option value="16:00-17:00">17:00-18:00</option>
                 </select>
             </div>
             <label for="submit" class="form-label">Pressione para encontrar os médicos disponíveis para a Especialidade desejada:</label>
@@ -148,23 +174,6 @@ include("../src/protect.php");
                 <select id="medico" class="form-select" name="medico" required>
                     <option value="" disabled selected>Verifique se existem médicos disponíveis</option>
                     <?php echo $options; ?>
-                </select>
-            </div>
-            <div class="mb-3">
-                <label for="data" class="form-label">Data</label>
-                <input type="date" name="data" id="data" class="form-control" required>
-            </div>
-            <div class="mb-3">
-                <label for="horario" class="form-label">Horário</label>
-                <select id="horario" name="horario" class="form-select" required>
-                    <option value="09:00-10:00">9:00-10:00</option>
-                    <option value="11:00-12:00">11:00-12:00</option>
-                    <option value="12:00-13:00">12:00-13:00</option>
-                    <option value="13:00-14:00">13:00-14:00</option>
-                    <option value="14:00-15:00">14:00-15:00</option>
-                    <option value="15:00-16:00">15:00-16:00</option>
-                    <option value="16:00-17:00">16:00-17:00</option>
-                    <option value="17:00-18:00">17:00-18:00</option>
                 </select>
             </div>
             <button type="submit" class="btn btn-primary">Agendar</button>

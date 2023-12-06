@@ -1,30 +1,41 @@
 <?php
-include("../src/conexao.php");
+include ("../src/conexao.php");
+
 include("../src/protect.php");
 
 $agendamentos = "";
-$sqlConsultas = "SELECT * FROM agendamentos WHERE id_medico = $_SESSION[id]";
+$sqlConsultas = "SELECT * FROM prontuarios WHERE id_medico = $_SESSION[id]";
 $result = $conn->query($sqlConsultas);
 
 if ($result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
+      
+      $idMedico = $row['id_medico'];
       $idPaciente = $row['id_paciente'];
     
-      $sqlConsultaNomePaciente = "SELECT nome FROM pacientes WHERE id = $idPaciente";
+      $sqlConsultaNomeMedico = "SELECT nome FROM medicos WHERE id = $idMedico";
+      $sqlConsultaNomePaciente = "SELECT nome FROM pacientes WHERE id_paciente = $idPaciente";
+
+      $resultadoNomeMedico = $conn->query($sqlConsultaNomeMedico);
       $resultadoNomePaciente = $conn->query($sqlConsultaNomePaciente);
 
-      if ($resultadoNomePaciente->num_rows > 0) {
+
+      if ($resultadoNomeMedico->num_rows > 0) {
+          $nomeMedico = $resultadoNomeMedico->fetch_assoc()['nome'];
           $nomePaciente = $resultadoNomePaciente->fetch_assoc()['nome'];
           $agendamentos .= '<tr>
-                              <td>Sr(a). ' . $nomePaciente . '</td>
-                              <td>' . $row['data'] . '</td>
-                              <td>' . $row['hora'] . '</td>
+                              <td>Dr(a). ' . $nomePaciente . '</td>
+                              <td>' . $nomeMedico . '</td>
+                              <td>' . $row['hora'] . '<a href= "cadastroSintomas.php">
+                                                      <span class="material-icons"> app_registration</span>
+                                                      </a>
+                              </td>
                            </tr>';
       }
   }
 } else {
   $agendamentos = '<tr>
-                    <td colspan="3">Nenhum agendamento encontrado.</td>
+                    
                   </tr>';
 }
 ?>
@@ -38,6 +49,7 @@ if ($result->num_rows > 0) {
 
   <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <style>
     body {
       display: flex;
@@ -89,7 +101,8 @@ if ($result->num_rows > 0) {
 </head>
 <body>
   <nav class="header">
-        <ul class="listaLinks">
+  <ul class="listaLinks">
+          
           <li class="ListLink">
             <a class="link" href="indexMedico.php">Home</a>
           </li>
@@ -99,8 +112,11 @@ if ($result->num_rows > 0) {
           <li class="ListLink">
             <a class="link" href="cadastro.php">Cadastro</a>
           </li>
-          <li class="ListLink">
+          <!-- <li class="ListLink">
             <a class="link" href="prontuario.php">Prontuarios</a>
+          </li> -->
+          <li class="ListLink">
+            <a class="link" href="registrarProntuario.php">Editar Prontuário</a>
           </li>
           <li class="ListLink">
             <a class="link" href="consultasagendadas.php">Minha Consultas</a>
@@ -113,13 +129,13 @@ if ($result->num_rows > 0) {
 
   <!-- Consultas Agendadas Section -->
   <div class="container mt-5">
-    <h2>Consultas Agendadas</h2>
+    <h2>Prontuário</h2>
     <table class="table" id="tabelaConsultas">
       <thead>
         <tr>
           <th scope="col">Paciente</th>
-          <th scope="col">Data</th>
-          <th scope="col">Horário</th>
+          <th scope="col">Médico</th>
+          <th scope="col">Sintomas</th>
         </tr>
       </thead>
       <tbody>

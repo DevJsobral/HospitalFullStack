@@ -86,7 +86,7 @@
             <a class="link" href="cadastro.php">Cadastro</a>
           </li>
           <li class="ListLink">
-            <a class="link" href="#">Prontuarios</a>
+            <a class="link" href="prontuario.php">Prontuarios</a>
           </li>
           <li class="ListLink">
             <a class="link" href="consultasagendadas.php">Minha Consultas</a>

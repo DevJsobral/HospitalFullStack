@@ -76,39 +76,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
   <section class="contentCadastro">
   <div class="container mt-5">
-    <h2 class="text-center">Cadastro</h2>
+    <h2 class="text-center">Registrar o Prontuário</h2>
     <form id="cadastroLoginForm" method="post" action="">
-      <label for="tipoUsuario">Escolha o Tipo de Usuário:</label>
-      <select id="tipoUsuario" name="tipo" class="form-select" required>
-        <option value="" disabled selected>Selecione o tipo de usuário</option>
-        <option value="paciente">Paciente</option>
-        <option id="medico" value="medico">Médico</option>
-      </select>
-
-      <label for="nome">Nome:</label>
+      <label for="nome">Sintomas:</label>
       <input type="text" id="nome" name="nome" class="form-control" required>
 
-      <label for="NomeUsuario">Nome de Usuário:</label>
-      <input type="text" id="nomeUsuario" name="nomeUsuario" class="form-control" required>
-
-      <label for="email">Email:</label>
-      <input type="email" id="email" name="email" class="form-control" required>
-
-      <label for="senha">Senha:</label>
-      <input type="password" id="senha" name="senha" class="form-control" required>
-
-      <div id="areaMedico" class="selectMedico">
-        <label for="tipoUsuario">Selecione sua especialidade:</label>
-        <select id="tipoEspecialidade" name="especialidade" class="form-select">
-          <option value="" disabled selected>Selecione sua especialidade</option>
-          <option value="Ortopedista">Ortopedista</option>
-          <option value="Geral">Clínico Geral</option>
-          <option value="Cardiologista">Cardiologista</option>
-          <option value="Pneumologista">Pneumologista</option>
-          <option value="Ginecologista">Ginecologista</option>
-          <option value="Urologista">Urologista</option>
-        </select>
-      </div>
+    
       <div class="btn-container">
         <button type="submit" class="btn btn-primary">Cadastrar</button>
       </div>
@@ -120,21 +93,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <p> Avenida Napóles - 511 - Jardim Atântico - Olinda</p>
     <p>&copy; 2023 Hospital Antonio Miguel. Todos os direitos reservados.</p>
   </footer>
-
-  <script>
-    const inputMedico = document.getElementById('areaMedico');
-    document.getElementById('tipoUsuario').addEventListener('change', function() {
-      // Obter o valor selecionado
-      var opcaoEscolhida = this.value;
-
-      if(opcaoEscolhida == 'medico') {
-        inputMedico.classList.remove('selectMedico');
-      }else{
-        inputMedico.classList.add('selectMedico');
-      }
-      
-    });
-  </script>
 
 </body>
 </html>
