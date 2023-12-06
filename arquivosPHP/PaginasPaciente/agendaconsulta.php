@@ -1,6 +1,6 @@
 <?php
-include("conexao.php");
-include("protect.php");
+include("../src/conexao.php");
+include("../src/protect.php");
 
     if(isset($_POST['especialidade'])) {
         $especialidade = $_POST["especialidade"];
@@ -117,6 +117,9 @@ include("protect.php");
           </li>
           <li class="ListLink">
           <a class="link" href="consultasagendadas.php">Minha Consultas</a>
+          </li>
+          <li class="ListLink">
+            <a class="link" href='logout.php'>Logout</a>
           </li>
         </ul>
   </nav>

@@ -1,5 +1,5 @@
 <?php
-include("conexao.php");
+include("../src/conexao.php");
 
 $medicos = "";
 $exibirMedicos = "SELECT * FROM medicos";
@@ -90,6 +90,9 @@ if ($result->num_rows > 0) {
           </li>
           <li class="ListLink">
           <a class="link" href="consultasagendadas.php">Minha Consultas</a>
+          </li>
+          <li class="ListLink">
+            <a class="link" href='logout.php'>Logout</a>
           </li>
         </ul>
   </nav>

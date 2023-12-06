@@ -1,5 +1,5 @@
 <?php
-include ("conexao.php");
+include ("../src/conexao.php");
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $tipoUsuario = $_POST["tipo"];
@@ -45,7 +45,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <title>Cadastro e Login</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="./src/styleCadastro.css" rel="stylesheet">
+  <link href="../src/styleCadastro.css" rel="stylesheet">
 </head>
 
 <body>

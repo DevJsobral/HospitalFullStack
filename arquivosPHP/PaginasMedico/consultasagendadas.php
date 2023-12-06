@@ -1,22 +1,22 @@
 <?php
-include("conexao.php");
-include("protect.php");
+include("../src/conexao.php");
+include("../src/protect.php");
 
 $agendamentos = "";
-$sqlConsultas = "SELECT * FROM agendamentos WHERE id_paciente = $_SESSION[id]";
+$sqlConsultas = "SELECT * FROM agendamentos WHERE id_medico = $_SESSION[id]";
 $result = $conn->query($sqlConsultas);
 
 if ($result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
-      $idMedico = $row['id_medico'];
+      $idPaciente = $row['id_paciente'];
     
-      $sqlConsultaNomeMedico = "SELECT nome FROM medicos WHERE id = $idMedico";
-      $resultadoNomeMedico = $conn->query($sqlConsultaNomeMedico);
+      $sqlConsultaNomePaciente = "SELECT nome FROM pacientes WHERE id = $idPaciente";
+      $resultadoNomePaciente = $conn->query($sqlConsultaNomePaciente);
 
-      if ($resultadoNomeMedico->num_rows > 0) {
-          $nomeMedico = $resultadoNomeMedico->fetch_assoc()['nome'];
+      if ($resultadoNomePaciente->num_rows > 0) {
+          $nomePaciente = $resultadoNomePaciente->fetch_assoc()['nome'];
           $agendamentos .= '<tr>
-                              <td>Dr(a). ' . $nomeMedico . '</td>
+                              <td>Sr(a).' . $nomePaciente . '</td>
                               <td>' . $row['data'] . '</td>
                               <td>' . $row['hora'] . '</td>
                            </tr>';
@@ -91,7 +91,7 @@ if ($result->num_rows > 0) {
   <nav class="header">
         <ul class="listaLinks">
           <li class="ListLink">
-            <a class="link" href="index.php">Home</a>
+            <a class="link" href="indexMedico.php">Home</a>
           </li>
           <li class="ListLink">
             <a class="link" href="login.php">Login</a>
@@ -100,10 +100,13 @@ if ($result->num_rows > 0) {
             <a class="link" href="cadastro.php">Cadastro</a>
           </li>
           <li class="ListLink">
-            <a class="link" href="medicos.php">Médicos</a>
+            <a class="link" href="#">Prontuarios</a>
           </li>
           <li class="ListLink">
             <a class="link" href="consultasagendadas.php">Minha Consultas</a>
+          </li>
+          <li class="ListLink">
+            <a class="link" href='logout.php'>Logout</a>
           </li>
         </ul>
   </nav>
@@ -114,7 +117,7 @@ if ($result->num_rows > 0) {
     <table class="table" id="tabelaConsultas">
       <thead>
         <tr>
-          <th scope="col">Médico</th>
+          <th scope="col">Paciente</th>
           <th scope="col">Data</th>
           <th scope="col">Horário</th>
         </tr>

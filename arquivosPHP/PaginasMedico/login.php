@@ -1,5 +1,5 @@
 <?php
-  include ("conexao.php");
+  include ("../src/conexao.php");
 
  if ($_SERVER["REQUEST_METHOD"] == "POST") {
      $tipo = $_POST["tipo"];
@@ -26,7 +26,7 @@
               $_SESSION['id'] = $usuario['id'];
               $_SESSION['usuario'] = $usuario['nome_usuario'];
 
-              header("Location: index.php");
+              header("Location: ../PaginasPaciente/index.php");
 
           }else{
               echo '<script>';
@@ -70,14 +70,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <title>Cadastro e Login</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="./src/styleCadastro.css" rel="stylesheet">
+  <link href="../src/styleCadastro.css" rel="stylesheet">
 </head>
 <body>
   <header>
   <nav class="header">
         <ul class="listaLinks">
           <li class="ListLink">
-            <a class="link" href="index.php">Home</a>
+            <a class="link" href="indexMedico.php">Home</a>
           </li>
           <li class="ListLink">
             <a class="link" href="login.php">Login</a>
@@ -86,10 +86,13 @@
             <a class="link" href="cadastro.php">Cadastro</a>
           </li>
           <li class="ListLink">
-            <a class="link" href="medicos.php">Médicos</a>
+            <a class="link" href="#">Prontuarios</a>
           </li>
           <li class="ListLink">
-          <a class="link" href="consultasagendadas.php">Minha Consultas</a>
+            <a class="link" href="consultasagendadas.php">Minha Consultas</a>
+          </li>
+          <li class="ListLink">
+            <a class="link" href='logout.php'>Logout</a>
           </li>
         </ul>
   </nav>

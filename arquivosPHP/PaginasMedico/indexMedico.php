@@ -1,4 +1,5 @@
 <?php
+include("../src/protect.php");
   if(!isset($_SESSION)){
     session_start();
 }
@@ -17,7 +18,7 @@ $mensagemBemVindo = "";
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="./src/style.css" rel="stylesheet">
+  <link href="../src/style.css" rel="stylesheet">
   <title>Hospital Antonio Miguel</title>
 </head>
 <body>
@@ -26,7 +27,7 @@ $mensagemBemVindo = "";
         <ul class="listaLinks">
           <?php echo $mensagemBemVindo; ?>
           <li class="ListLink">
-            <a class="link" href="index.php">Home</a>
+            <a class="link" href="indexMedico.php">Home</a>
           </li>
           <li class="ListLink">
             <a class="link" href="login.php">Login</a>
@@ -35,7 +36,7 @@ $mensagemBemVindo = "";
             <a class="link" href="cadastro.php">Cadastro</a>
           </li>
           <li class="ListLink">
-            <a class="link" href="medicos.php">Médicos</a>
+            <a class="link" href="#">Prontuarios</a>
           </li>
           <li class="ListLink">
             <a class="link" href="consultasagendadas.php">Minha Consultas</a>
@@ -52,10 +53,10 @@ $mensagemBemVindo = "";
       <div class="col-lg-6">
         <h1>Hospital Antonio Miguel</h1>
         <p>Prestação de serviços de saúde de qualidade.</p>
-        <a href="agendaconsulta.php" class="btn btn-primary">Agende Sua Consulta</a>
+        <a href="indexMedico.php" class="btn btn-primary" onclick="scriptMedico()">Agende Sua Consulta</a>
       </div>
       <div class="col-lg-6">
-        <img src="./src/medicoyoung.png" alt="Hospital Image" class="img-fluid">
+        <img src="../src/medicoyoung.png" alt="Hospital Image" class="img-fluid">
       </div>
     </div>
   </div>
@@ -111,6 +112,11 @@ $mensagemBemVindo = "";
   <!-- Bootstrap JS and Popper.js (required for Bootstrap JavaScript plugins) -->
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.min.js"></script>
+  <script>
+    function scriptMedico() {
+        alert("Você é um médico, não pode agendar consultas");
+    }
+
+  </script>
 </body>
 </html>
-
