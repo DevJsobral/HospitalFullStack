@@ -2,46 +2,46 @@
 include("../src/conexao.php");
 include("../src/protect.php");
 
-if (isset($_POST['especialidade'])) {
+if (isset($_POST['submit1'])) {
     $especialidade = $_POST["especialidade"];
-    $horario = $_POST["horario"];
+    $data = $_POST["data"];
+    $horario = $_POST["horario"]; 
+    $_SESSION['data'] = $data;
+    $_SESSION['horario'] = $horario;
 
-    $sql = "SELECT nome_usuario, id FROM medicos WHERE disponivel = TRUE AND especialidade = '$especialidade'";
+    $sql = "SELECT nome_usuario, id, nome FROM medicos WHERE disponivel = TRUE AND especialidade = '$especialidade'";
     $result = $conn->query($sql);
     $options = "";
 
     if ($result->num_rows > 0) {
         while ($row = $result->fetch_assoc()) {
-            $sqlHorarios = "SELECT hora FROM agendamentos WHERE id_medico = '" . $row["id"] . "' AND hora = '$horario'";
+            $sqlHorarios = "SELECT * FROM agendamentos WHERE id_medico = '" . $row["id"] . "' AND hora = '$horario' AND dataConsulta = '$data'";
             $resultHorarios = $conn->query($sqlHorarios);
-
-            if ($resultHorarios->num_rows > 0) {
-                // Se houver algum agendamento para este médico e horário, significa que não está disponível
-                $options .= "<option value=''>Nenhum(a) $especialidade disponível neste horário</option>";
-            } else {
-                // Se não houver agendamentos, o médico está disponível
-                $options .= "<option value='" . $row["nome_usuario"] . "'>" . $row["nome_usuario"] . "</option>";
+    
+            if ($resultHorarios->num_rows === 0) {
+                $options .= "<option value='" . $row["nome_usuario"] . "'>Dr(a)." . $row["nome"] . "</option>";
             }
         }
-    } else {
-        $options = "<option value=''>Nenhum médico disponível</option>";
+    }
+    
+    if (empty($options)) {
+        $options = "<option value='' disabled selected>Nenhum(a) $especialidade disponível neste horário</option>";
     }
 }
 
-    if (isset($_POST['medico'])) {
+    if (isset($_POST['submit2'])) {
         $medico = $_POST["medico"];
-        $data = $_POST["data"];
-        $horario = $_POST["horario"];
+        $data = $_SESSION['data'];
+        $hora = $_SESSION['horario'];
+
+        echo $hora;
 
         $sqlBuscaMedico = "SELECT id FROM medicos WHERE nome_usuario = '$medico'";
         $resultado = mysqli_query($conn, $sqlBuscaMedico);
         $linha = mysqli_fetch_assoc($resultado);
         $idMedico = $linha['id'];
 
-        $sql = "UPDATE medicos SET disponivel = 0 WHERE nome_usuario = '$medico'";
-        mysqli_query($conn, $sql);
-
-        $sqlNovaConsulta = "INSERT INTO agendamentos (id_paciente, id_medico, data, hora) VALUES ('" . $_SESSION['id'] . "','$idMedico','$data', '$horario')";
+        $sqlNovaConsulta = "INSERT INTO agendamentos (id_paciente, id_medico, dataConsulta, hora) VALUES ('" . $_SESSION['id'] . "','$idMedico','$data', '$hora')";
         mysqli_query($conn, $sqlNovaConsulta);
 
         header("Location: consultasagendadas.php");
@@ -136,7 +136,7 @@ if (isset($_POST['especialidade'])) {
 </header>
     <div class="container mt-5">
         <h2>Agendar Consulta</h2>
-        <form id="consultaForm" method="post" action="">
+        <form id="consultaForm" name="configs" method="post" action="">
             <div class="mb-3">
                 <label for="especialidade" class="form-label">Especialidade</label>
                 <select id="especialidade" class="form-select" name="especialidade" required>
@@ -155,28 +155,30 @@ if (isset($_POST['especialidade'])) {
             </div>
             <div class="mb-3">
                 <label for="horario" class="form-label">Horário</label>
-                <select id="horario" name="horario" class="form-select" required>
+                <select type="hidden" id="horario" name="horario" class="form-select" required>
                     <option value="09:00-10:00">9:00-10:00</option>
-                    <option value="10:00-11:00">11:00-12:00</option>
-                    <option value="11:00-12:00">13:00-14:00</option>
-                    <option value="13:00-14:00">14:00-15:00</option>
-                    <option value="14:00-15:00">15:00-16:00</option>
-                    <option value="15:00-16:00">16:00-17:00</option>
-                    <option value="16:00-17:00">17:00-18:00</option>
+                    <option value="10:00-11:00">10:00-11:00</option>
+                    <option value="11:00-12:00">11:00-12:00</option>
+                    <option value="13:00-14:00">13:00-14:00</option>
+                    <option value="14:00-15:00">14:00-15:00</option>
+                    <option value="15:00-16:00">15:00-16:00</option>
+                    <option value="16:00-17:00">16:00-17:00</option>
+                    <option value="17:00-18:00">17:00-18:00</option>
                 </select>
             </div>
             <label for="submit" class="form-label">Pressione para encontrar os médicos disponíveis para a Especialidade desejada:</label>
-            <button type="submit" class="buttonEncontrar">Encontrar</button>
+            <button type="submit" name="submit1" class="buttonEncontrar">Encontrar</button>
         </form>    
-        <form id="consultaForm" method="post" action="">
+        <form id="consultaForm" name="medico" method="post" action="">
             <div class="mb-3">
+                <br>
                 <label for="medico" class="form-label">Médico</label>
                 <select id="medico" class="form-select" name="medico" required>
                     <option value="" disabled selected>Verifique se existem médicos disponíveis</option>
                     <?php echo $options; ?>
                 </select>
             </div>
-            <button type="submit" class="btn btn-primary">Agendar</button>
+            <button type="submit" name="submit2" class="btn btn-primary">Agendar</button>
         </form>
 
         <!-- Mensagem de sucesso após agendamento -->
@@ -191,57 +193,29 @@ if (isset($_POST['especialidade'])) {
         <p> Avenida Napóles - 511 - Jardim Atântico - Olinda</p>
         <p>&copy; 2023 Hospital Antonio Miguel. Todos os direitos reservados.</p>
     </footer>
-    <!-- Bootstrap JS and Popper.js (required for Bootstrap JavaScript plugins) -->
+
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.min.js"></script>
 
-    <!-- Script para agendamento de consulta -->
 <script>
-    function agendarConsulta() {
-        var medicoSelecionado = document.getElementById('medico').value;
-        var dataSelecionada = document.getElementById('data').value;
-        var horarioSelecionado = document.getElementById('horario').value;
+    var dataAtual = new Date();
 
-        if (validarHorario(medicoSelecionado, dataSelecionada, horarioSelecionado)) {
-            // Adicionar a consulta agendada ao armazenamento local
-            adicionarConsultaAgendada(medicoSelecionado, dataSelecionada, horarioSelecionado);
+    var umAnoDepois = new Date();
+    umAnoDepois.setFullYear(dataAtual.getFullYear() + 1);
 
-            // Ocultar formulário
-            document.getElementById('consultaForm').style.display = 'none';
-            // Exibir mensagem de sucesso
-            document.getElementById('mensagemSucesso').style.display = 'block';
-        }else{
-            alert('Horário indisponível ou data inválida. Por favor, escolha outra data ou horário.');
-        }
-    }
-    function validarHorario(medico, data, horario) {
-        var horariosDisponiveis = obterHorariosDisponiveisPorMedico(medico);
-        return horariosDisponiveis.includes(horario);
+    var dataAtualFormatada = formatDate(dataAtual);
+    var umAnoDepoisFormatada = formatDate(umAnoDepois);
+
+    document.getElementById("data").setAttribute("min", dataAtualFormatada);
+    document.getElementById("data").setAttribute("max", umAnoDepoisFormatada);
+
+    function formatDate(date) {
+      var year = date.getFullYear();
+      var month = (date.getMonth() + 1).toString().padStart(2, '0');
+      var day = date.getDate().toString().padStart(2, '0');
+      return year + '-' + month + '-' + day;
     }
 
-    function obterHorariosDisponiveisPorMedico(medico) {
-            switch (medico) {
-                case 'Dr. Willian Goulart':
-                    return ['10:00', '11:00', '14:00', '15:00', '16:00', '17:00'];
-                case 'Dr. João Silva':
-                    return ['09:00', '10:00', '14:00', '15:00', '16:00', '17:00'];
-                // Adicione casos para os outros médicos conforme necessário
-                default:
-                    return [];
-            }
-        }
-
-        function adicionarConsultaAgendada(medico, data, horario) {
-            var consultasAgendadas = JSON.parse(localStorage.getItem('consultasAgendadas')) || [];
-
-            consultasAgendadas.push({
-                medico: medico,
-                data: data,
-                horario: horario
-            });
-
-            localStorage.setItem('consultasAgendadas', JSON.stringify(consultasAgendadas));
-        }
     </script>
 </body>
 
