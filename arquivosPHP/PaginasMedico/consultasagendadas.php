@@ -17,7 +17,7 @@ if ($result->num_rows > 0) {
           $nomePaciente = $resultadoNomePaciente->fetch_assoc()['nome'];
           $agendamentos .= '<tr>
                               <td>Sr(a). ' . $nomePaciente . '</td>
-                              <td>' . $row['data'] . '</td>
+                              <td>' . $row['dataConsulta'] . '</td>
                               <td>' . $row['hora'] . '</td>
                            </tr>';
       }
